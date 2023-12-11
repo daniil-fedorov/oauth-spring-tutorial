@@ -16,7 +16,7 @@ public class SocialApplication {
 
     @GetMapping("/user")
     public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal) {
-        return Collections.singletonMap("name", principal.getAttribute("name"));
+        return Collections.singletonMap("name", principal.getAttribute("login"));
     }
 
     public static void main(String[] args) {

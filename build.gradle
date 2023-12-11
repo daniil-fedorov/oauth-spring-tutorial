@@ -22,6 +22,7 @@ dependencies {
 	implementation group: "org.springframework.security", name: 'spring-security-config', version: '6.1.2'
 	implementation 'org.webjars:webjars-locator-core'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.webjars:js-cookie:2.1.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

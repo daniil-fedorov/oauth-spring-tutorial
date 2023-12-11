@@ -1,12 +1,5 @@
 <!doctype html>
 <html lang="en">
-<script type="text/javascript">
-    $.get("/user", function(data) {
-        $("#user").html(data.name);
-        $(".unauthenticated").hide()
-        $(".authenticated").show()
-    });
-</script>
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -17,6 +10,14 @@
     <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css"/>
     <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $.get("/user", function(data) {
+            $("#user").html(data.name);
+            $(".unauthenticated").hide()
+            $(".authenticated").show()
+        });
+    </script>
+
 </head>
 <body>
 <h1>Demo</h1>
@@ -25,6 +26,19 @@
 </div>
 <div class="container authenticated">
     Logged in as: <span id="user"></span>
+    <div>
+        <button onClick="logout()" class="btn btn-primary">Logout</button>
+        <script>
+            var logout = function() {
+                $.post("/logout", function() {
+                    $("#user").html('');
+                    $(".unauthenticated").show();
+                    $(".authenticated").hide();
+                })
+                return true;
+            }
+        </script>
+    </div>
 </div>
 <div class="container"></div>
 </body>
