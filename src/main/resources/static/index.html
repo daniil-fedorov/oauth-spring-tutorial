@@ -10,13 +10,9 @@
     <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css"/>
     <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript">
-        $.get("/user", function(data) {
-            $("#user").html(data.name);
-            $(".unauthenticated").hide()
-            $(".authenticated").show()
-        });
-    </script>
+    <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
+    <script type="text/javascript" src="ajax.js"></script>
+
 
 </head>
 <body>
@@ -30,15 +26,21 @@
         <button onClick="logout()" class="btn btn-primary">Logout</button>
         <script>
             var logout = function() {
-                $.post("/logout", function() {
-                    $("#user").html('');
-                    $(".unauthenticated").show();
-                    $(".authenticated").hide();
-                })
+                $("#user").html('');
+                $(".unauthenticated").show()
+                $(".authenticated").hide()
+                $.ajax({
+                    type: 'POST',
+                    url: "http://localhost:8080/logout",
+                    headers: {
+                        "X-XSRF-TOKEN": Cookies.get('XSRF-TOKEN')
+                    }
+                });
                 return true;
             }
         </script>
     </div>
+
 </div>
 <div class="container"></div>
 </body>
