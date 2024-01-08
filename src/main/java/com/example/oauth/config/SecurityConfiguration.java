@@ -6,8 +6,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfToken;
@@ -15,8 +18,9 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-
-import static org.springframework.security.config.Customizer.withDefaults;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class SecurityConfiguration {
@@ -43,9 +47,12 @@ public class SecurityConfiguration {
                 .csrfTokenRepository(tokenRepository)
                 .csrfTokenRequestHandler(requestHandler)
             )
+
             .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
 
-            .oauth2Login(withDefaults());
+            .oauth2Login(o -> o
+                .failureHandler(authenticationFailureHandler())
+            );
         return http.build();
     }
 
@@ -61,6 +68,35 @@ public class SecurityConfiguration {
             filterChain.doFilter(request, response);
         }
 
+    }
+
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new CustomAuthenticationFailureHandler();
+    }
+
+    public static class CustomAuthenticationFailureHandler
+        implements AuthenticationFailureHandler {
+
+        @Override
+        public void onAuthenticationFailure(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException exception) throws IOException {
+
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            Map<String, Object> data = new HashMap<>();
+            data.put(
+                "timestamp",
+                Calendar.getInstance().getTime());
+            data.put(
+                "exception",
+                exception.getMessage());
+
+
+            request.getSession().setAttribute("error.message", data.toString());
+            response.sendRedirect("/error");
+        }
     }
 
 }

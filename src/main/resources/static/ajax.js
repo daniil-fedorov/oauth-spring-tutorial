@@ -4,13 +4,13 @@ $.get("/user", function(data) {
     $(".authenticated").show()
 });
 
-$.get("/error", function(data) {
-    if (data) {
-        $(".error").html(data);
-    } else {
-        $(".error").html('');
-    }
-});
+// $.get("/error", function(data) {
+//     if (data) {
+//         $(".error").html("works");
+//     } else {
+//         $(".error").html('');
+//     }
+// });
 
 
 
